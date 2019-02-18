@@ -103,17 +103,17 @@ namespace Final_qualifying_work
             connection.Close();
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             int indexRow = 0;
             if (e.RowIndex >= 0)
                 indexRow = e.RowIndex;
             else return;
-            DataGridViewRow row = dataGridView1.Rows[indexRow];                       
+            DataGridViewRow row = dataGridView1.Rows[indexRow];
             //textBox1.Text = row.Cells[0].Value.ToString();
             //label1.Text = "RowIndex = " + row;
-            label3.Text = row.Cells[0].Value.ToString();
-            label4.Text = row.Cells[1].Value.ToString();
+            textBox1.Text = row.Cells[0].Value.ToString();
+            textBox2.Text = row.Cells[1].Value.ToString();
         }
 
         private void insert_data(string servise)
@@ -141,5 +141,7 @@ namespace Final_qualifying_work
                 label1.Text = "Error DELETE!\nMessage error: " + error.Message;
             }
         }
+
+        
     }
 }
