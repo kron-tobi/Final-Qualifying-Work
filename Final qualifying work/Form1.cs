@@ -26,7 +26,7 @@ namespace Final_qualifying_work
         public Form1()
         {
             InitializeComponent();
-            parametresConnections = "Server = 127.0.0.1; Port = 5432; User Id = postgres; Password = admin; Database = MyFirstBase";
+            parametresConnections = "Server = 127.0.0.1; Port = 5432; User Id = postgres; Password = postgres; Database = MyFirstBase";
             query = "SELECT * FROM request"; // запрос к таблице
             connection = new NpgsqlConnection(parametresConnections);
             //command = new NpgsqlCommand(query, connection);
@@ -105,13 +105,15 @@ namespace Final_qualifying_work
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            //DataGridViewRow line = dataGridView1.CurrentRow;         
-            int line = e.RowIndex;
-            label1.Text = "RowIndex = " + line;
-            textBox1.Text = Convert.ToString(line);
-            //textBox1.Clear();
-            //textBox1.Text = Convert.ToString(line.Cells[0].Value);
-            int s;
+            int indexRow = 0;
+            if (e.RowIndex >= 0)
+                indexRow = e.RowIndex;
+            else return;
+            DataGridViewRow row = dataGridView1.Rows[indexRow];                       
+            //textBox1.Text = row.Cells[0].Value.ToString();
+            //label1.Text = "RowIndex = " + row;
+            label3.Text = row.Cells[0].Value.ToString();
+            label4.Text = row.Cells[1].Value.ToString();
         }
 
         private void insert_data(string servise)
