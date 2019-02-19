@@ -12,41 +12,24 @@ using System.Windows.Forms;
 namespace Final_qualifying_work
 {    
     public partial class Form1 : Form
-    {
-        public static Form1 F1;
+    {        
         List<string> dataItems = new List<string>();
         string parametresConnections;
         string query;
         string textIN;
         NpgsqlConnection connection; 
-        NpgsqlCommand command;
-        //NpgsqlDataReader dataReader;
+        NpgsqlCommand command;        
         NpgsqlDataAdapter adapter;
-        DataSet data;
-        bool connected = false;
-        //private Form0 MyForm = Application.OpenForms[0] as Form0;
-        
+        DataSet data;     
 
         public Form1()
         {
-            InitializeComponent();
-            F1 = this;
-            /*
-            parametresConnections = "Server = " + textBox3.Text + "; Port = " + textBox4.Text + "; User Id = " + textBox5.Text + "; Password = " + textBox6.Text + "; Database = " + textBox7.Text;
-            query = "SELECT * FROM request"; // запрос к таблице
-            connection = new NpgsqlConnection(parametresConnections);
-            //command = new NpgsqlCommand(query, connection);
-            adapter = new NpgsqlDataAdapter(query, connection);
-            //dataReader = command.ExecuteReader();
-            data = new DataSet();*/
-            
-            
+            InitializeComponent();                       
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            parametresConnections = Form0.F0.parametresConnections;
-            //parametresConnections = Form0.F0.parametresConnections;
+            parametresConnections = Form0.F0.parametresConnections;            
             query = Form0.F0.query;
             connection = Form0.F0.connection;
             adapter = Form0.F0.adapter;
@@ -79,7 +62,7 @@ namespace Final_qualifying_work
                 }
                 textIN = textBox2.Text;
                 if (textIN != "")                
-                    insert_data(textIN);
+                    insertData(textIN);
             }
             catch (Exception error)
             {
@@ -111,28 +94,7 @@ namespace Final_qualifying_work
             adapter.Fill(data);
             dataGridView1.DataSource = data.Tables[0];            
             connection.Close();
-        }
-
-        private void button3_Click(object sender, EventArgs e)  // CONNECT
-        {
-            /*try
-            {
-                connection.Open();
-                if (connection.State == System.Data.ConnectionState.Open)
-                {
-                    connected = true;
-                    label1.Text = "Connection status: Successful Connection!";
-                }
-            }
-            catch (Exception error)
-            {
-                label1.Text = "Connection status: Error connections!\nMessage error: " + error.Message;
-            }
-            data.Clear();
-            adapter.Fill(data);
-            dataGridView1.DataSource = data.Tables[0];            
-            connection.Close();*/
-        }
+        }        
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -147,7 +109,7 @@ namespace Final_qualifying_work
             textBox2.Text = row.Cells[1].Value.ToString();
         }
 
-        private void insert_data(string servise)
+        private void insertData(string servise)
         {
             try
             {
@@ -175,7 +137,7 @@ namespace Final_qualifying_work
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {            
-            //Application.Exit();
+            Application.Exit();
         }
     }
 }

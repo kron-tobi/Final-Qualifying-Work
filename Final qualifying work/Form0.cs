@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Npgsql;
 using System.Windows.Forms;
+using System.IO;
 
 namespace Final_qualifying_work
 {
@@ -30,11 +31,26 @@ namespace Final_qualifying_work
         }
 
         private void Form0_Load(object sender, EventArgs e)
-        {
-            
+        {            
+            if (!File.Exists("userParametresConnection.txt"))
+            {
+                using (StreamWriter strWr = new StreamWriter("userParametresConnection.txt"))
+                {
+                    strWr.WriteLine("127.0.0.1{0}5432{0}postgres{0}postgres{0}MyFirstBase", Environment.NewLine);
+                }
+            }
+            else 
+            {
+                string[] line = File.ReadAllLines("userParametresConnection.txt", Encoding.Default);
+                textBox3.Text = line[0];
+                textBox4.Text = line[1];
+                textBox5.Text = line[2];
+                textBox6.Text = line[3];
+                textBox7.Text = line[4];
+            }                          
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e)  // CONNECT
         {
             try
             {
@@ -58,6 +74,24 @@ namespace Final_qualifying_work
                 label6.Text = "Connection status: Error connections!\nMessage error: " + error.Message;
             }                     
             
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                using (StreamWriter strWr = new StreamWriter("userParametresConnection.txt"))
+                {
+                    strWr.WriteLine(textBox3.Text + "{0}" + textBox4.Text + "{0}" + textBox5.Text + "{0}" + textBox6.Text + "{0}" + textBox7.Text, Environment.NewLine);
+                }
+            }
+            else if (!checkBox1.Checked)
+            {
+                using (StreamWriter strWr = new StreamWriter("userParametresConnection.txt"))
+                {
+                    strWr.WriteLine("127.0.0.1{0}5432{0}postgres{0}postgres{0}MyFirstBase", Environment.NewLine);
+                }                               
+            }
         }
     }
 }
