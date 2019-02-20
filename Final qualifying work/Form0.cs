@@ -60,8 +60,7 @@ namespace Final_qualifying_work
                 adapter = new NpgsqlDataAdapter(query, connection);
                 connection.Open();
                 if (connection.State == System.Data.ConnectionState.Open)
-                {
-                    toolStripStatusLabel2.Text = "Connection status: Successful Connection!";
+                {                    
                     connection.Close();
                     this.Hide();
                     Form1 newForm1 = new Form1();
@@ -71,7 +70,7 @@ namespace Final_qualifying_work
             }
             catch (Exception error)
             {
-                toolStripStatusLabel2.Text = "Connection status: Error connections!\nMessage error: " + error.Message;
+                toolStripStatusLabel2.Text = "Ошибка соединения!\nMessage error: " + error.Message;
             }                     
             
         }

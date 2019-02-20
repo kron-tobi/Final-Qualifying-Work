@@ -41,14 +41,14 @@ namespace Final_qualifying_work
                 connection.Open();                
                 if (connection.State == System.Data.ConnectionState.Open)
                 {
-                    toolStripStatusLabel2.Text = "Connection status: Successful Connection!";
+                    toolStripStatusLabel2.Text = "Успешное подключение к базе!";
                     adapter.Fill(data);
                     dataGridView1.DataSource = data.Tables[0];
                 }
             }
             catch (Exception error)
             {
-                toolStripStatusLabel2.Text = "Connection status: Error connections!\nMessage error: " + error.Message;
+                toolStripStatusLabel2.Text = "Ошибка соединения!\nMessage error: " + error.Message;
             }     
             connection.Close();
         }
@@ -87,14 +87,13 @@ namespace Final_qualifying_work
                 connection.Open();
                 DataGridViewRow line = dataGridView1.CurrentRow;
                 if (connection.State == System.Data.ConnectionState.Open)
-                {
-                    toolStripStatusLabel2.Text = "Connection3 status: Successful Connection3!";                    
+                {                                        
                     deleteLine(Convert.ToInt32(textBox1.Text));
                 }
             }
             catch (Exception error)
             {
-                toolStripStatusLabel2.Text = "Error DELETE!\nMessage error: " + error.Message;
+                toolStripStatusLabel2.Text = "Ошибка Соединения!\nMessage error: " + error.Message;
             }            
             data.Clear();
             adapter.Fill(data);
@@ -115,18 +114,19 @@ namespace Final_qualifying_work
             textBox2.Text = row.Cells[1].Value.ToString();
         }
 
-        private void insertData(string servise)
+        /*private void insertData(string servise)
         {
             try
             {
                 command = new NpgsqlCommand("INSERT INTO request (servise) VALUES ('" + servise + "');", connection); //",'" + servise + "'," + status + ",'" + name_master + "','" + name_client + "');", connection);
                 command.ExecuteNonQuery();
+                toolStripStatusLabel2.Text = "Успешное добавление!";
             }
             catch (Exception error)
             {
-                toolStripStatusLabel2.Text = "Error INSERT!\nMessage error: " + error.Message;
+                toolStripStatusLabel2.Text = "Ошибка Вставки!\nMessage error: " + error.Message;
             }
-        }
+        }*/
 
         private void deleteLine(int id_request)
         {
@@ -134,10 +134,11 @@ namespace Final_qualifying_work
             {
                 command = new NpgsqlCommand("DELETE FROM request WHERE id_request = " + id_request + ";", connection);
                 command.ExecuteNonQuery();
+                toolStripStatusLabel2.Text = "Удаление выполнено!";
             }
             catch (Exception error)
             {
-                toolStripStatusLabel2.Text = "Error DELETE!\nMessage error: " + error.Message;
+                toolStripStatusLabel2.Text = "Ошибка! Удалить не удалось!\nMessage error: " + error.Message;
             }
         }
 

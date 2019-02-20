@@ -15,9 +15,9 @@ namespace Final_qualifying_work
     {
         string parametresConnections;
         string query;
-        //string textIN;
+        string textIN;
         NpgsqlConnection connection;
-        //NpgsqlCommand command;
+        NpgsqlCommand command;
         NpgsqlDataAdapter adapter;
         DataSet data;        
 
@@ -44,6 +44,7 @@ namespace Final_qualifying_work
                     for(int i = 0; i < data.Tables[0].Rows.Count; i++)
                     {
                         checkedListBox1.Items.Add(data.Tables[0].Rows[i][1].ToString());
+                        listBox1.Items.Add(data.Tables[0].Rows[i][2].ToString());
                     }
                     //checkedListBox1.DataSource = data.Tables[0];                    
                 }
@@ -60,9 +61,28 @@ namespace Final_qualifying_work
             this.Close();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e) // INSERT(Save)
         {
             this.Close();
+            try
+            {
+                connection.Open();
+                if (connection.State == System.Data.ConnectionState.Open)
+                {
+                    
+                }
+                //textIN = ;
+                if (textBox1.Text != "" && textBox2.Text != "")                
+                    insertData(textBox1.Text, Convert.ToInt32(textBox2.Text),richTextBox1.Text);
+            }
+            catch (Exception error)
+            {
+                label1.Text = "Connection2 status: Error connections2!\nMessage error: " + error.Message;
+            }
+            data.Clear();
+            adapter.Fill(data);
+            //dataGridView1.DataSource = data.Tables[0];           
+            connection.Close();
         }
 
         private void load_service()
@@ -71,6 +91,25 @@ namespace Final_qualifying_work
             //checkedListBox1.
             //service_items = checkedListBox1.CheckedItems();
             
+        }
+
+        private void ToolStripMenuItem0_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void insertData(string fio, int phone_num, string comment)
+        {
+            try
+            {
+                command = new NpgsqlCommand("INSERT INTO req (fio, phone_num, date, comment_req) VALUES ('" + fio + "'," + phone_num + "," + dateTimePicker1 + ",'" + comment + "');", connection); //",'" + servise + "'," + status + ",'" + name_master + "','" + name_client + "');", connection);
+                command.ExecuteNonQuery();
+                toolStripStatusLabel2.Text = "Успешное добавление!";
+            }
+            catch (Exception error)
+            {
+                toolStripStatusLabel2.Text = "Ошибка Вставки!\nMessage error: " + error.Message;
+            }
         }
     }
 }
