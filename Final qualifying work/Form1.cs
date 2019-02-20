@@ -13,14 +13,15 @@ namespace Final_qualifying_work
 {    
     public partial class Form1 : Form
     {        
-        List<string> dataItems = new List<string>();
+        //List<string> dataItems = new List<string>();
         string parametresConnections;
         string query;
-        string textIN;
+        //string textIN;
         NpgsqlConnection connection; 
         NpgsqlCommand command;        
         NpgsqlDataAdapter adapter;
-        DataSet data;     
+        DataSet data;
+        
 
         public Form1()
         {
@@ -34,26 +35,31 @@ namespace Final_qualifying_work
             connection = Form0.F0.connection;
             adapter = Form0.F0.adapter;
             data = new DataSet();
+            
             try
             {
                 connection.Open();                
                 if (connection.State == System.Data.ConnectionState.Open)
                 {
-                    label1.Text = "Connection status: Successful Connection!";
+                    toolStripStatusLabel2.Text = "Connection status: Successful Connection!";
                     adapter.Fill(data);
                     dataGridView1.DataSource = data.Tables[0];
                 }
             }
             catch (Exception error)
             {
-                label1.Text = "Connection status: Error connections!\nMessage error: " + error.Message;
+                toolStripStatusLabel2.Text = "Connection status: Error connections!\nMessage error: " + error.Message;
             }     
             connection.Close();
         }
 
         private void button1_Click(object sender, EventArgs e)  // INSERT
         {
-            try
+            //this.Hide();
+            Form2 newForm2 = new Form2();
+            newForm2.ShowDialog();
+            //this.Close();
+            /*try
             {
                 connection.Open();
                 if (connection.State == System.Data.ConnectionState.Open)
@@ -71,7 +77,7 @@ namespace Final_qualifying_work
             data.Clear();
             adapter.Fill(data);
             dataGridView1.DataSource = data.Tables[0];           
-            connection.Close();           
+            connection.Close();*/
         }
 
         private void button2_Click(object sender, EventArgs e)  // DELETE
@@ -82,13 +88,13 @@ namespace Final_qualifying_work
                 DataGridViewRow line = dataGridView1.CurrentRow;
                 if (connection.State == System.Data.ConnectionState.Open)
                 {
-                    label1.Text = "Connection3 status: Successful Connection3!";                    
+                    toolStripStatusLabel2.Text = "Connection3 status: Successful Connection3!";                    
                     deleteLine(Convert.ToInt32(textBox1.Text));
                 }
             }
             catch (Exception error)
             {
-                label1.Text = "Error DELETE!\nMessage error: " + error.Message;
+                toolStripStatusLabel2.Text = "Error DELETE!\nMessage error: " + error.Message;
             }            
             data.Clear();
             adapter.Fill(data);
@@ -118,7 +124,7 @@ namespace Final_qualifying_work
             }
             catch (Exception error)
             {
-                label1.Text = "Error INSERT!\nMessage error: " + error.Message;
+                toolStripStatusLabel2.Text = "Error INSERT!\nMessage error: " + error.Message;
             }
         }
 
@@ -131,7 +137,7 @@ namespace Final_qualifying_work
             }
             catch (Exception error)
             {
-                label1.Text = "Error DELETE!\nMessage error: " + error.Message;
+                toolStripStatusLabel2.Text = "Error DELETE!\nMessage error: " + error.Message;
             }
         }
 
