@@ -17,19 +17,22 @@ namespace Final_qualifying_work
         string query;        
         NpgsqlConnection connection;
         NpgsqlCommand command;
+        NpgsqlDataReader reader;
         NpgsqlDataAdapter adapter;
         DataSet data;        
 
         public Form2()
         {
-            InitializeComponent();
+            InitializeComponent(); 
         }
 
         private void Form2_Load(object sender, EventArgs e)
-        {            
+        {
+            //if(checkedListBox1.)           
+           
             parametresConnections = Form0.F0.parametresConnections;
             connection = Form0.F0.connection;
-            query = "SELECT * FROM service";
+            query = "SELECT id_service,name_service,price_service FROM service";
             //query = "SELECT id_req, fio, phone_num, date, comment_req  FROM req UNION SELECT id_req, fio, phone_num, date, comment_req FROM req_list";
             adapter = new NpgsqlDataAdapter(query, connection);
             data = new DataSet();                        
@@ -41,11 +44,14 @@ namespace Final_qualifying_work
                 {
                     toolStripStatusLabel2.Text = "Успешное подключение к форме Услуг!";
                     adapter.Fill(data);
+                    dataGridView2.DataSource = data.Tables[0];
+                    dataGridView2.ClearSelection();
+                    /*
                     for(int i = 0; i < data.Tables[0].Rows.Count; i++)
                     {
                         checkedListBox1.Items.Add(data.Tables[0].Rows[i][1].ToString());
                         listBox1.Items.Add(data.Tables[0].Rows[i][2].ToString());
-                    }
+                    }*/
                     //checkedListBox1.DataSource = data.Tables[0];                    
                 }
             }
@@ -77,15 +83,10 @@ namespace Final_qualifying_work
             }
             catch (Exception error)
             {
-                label1.Text = "Ошибка! Сохранить не удалось!\nMessage error: " + error.Message;
+                toolStripStatusLabel2.Text = "Ошибка! Сохранить не удалось!\nMessage error: " + error.Message;
             }
             connection.Close();
             //this.Close();
-        }        
-
-        private void ToolStripMenuItem0_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void insertData(string fio_req, int phone_num, DateTimePicker date_req, string comment_req)
@@ -101,6 +102,77 @@ namespace Final_qualifying_work
             {
                 toolStripStatusLabel2.Text = "Ошибка Вставки!\nMessage error: " + error.Message;
             }
+        }
+
+        private void takeIdFromCheckedListBox()
+        {
+
+        }
+
+        private void takeElementArray(int[] arr)
+        {
+            /*dataReader = command.ExecuteReader();
+            while (dataReader.Read())
+                MessageBox.Show("{0}\t{1} \n", dataReader[0], dataReader[1]);
+            for (int i = 0; i < arr.Length; i++)
+            {
+                //reader =
+                
+            }*/
+            // выводим названия столбцов
+            //Console.WriteLine("{0}\t{1}\t{2}", reader.GetName(0), reader.GetName(1), reader.GetName(2));
+
+            while (reader.Read()) // построчно считываем данные
+            {
+                object id = reader.GetValue(0);
+                object name = reader.GetValue(1);
+                object age = reader.GetValue(2);
+
+                Console.WriteLine("{0} \t{1} \t{2}", id, name, age);
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {            
+            try
+            {
+                connection.Open();
+                if (connection.State == System.Data.ConnectionState.Open)
+                {                    
+                    command = new NpgsqlCommand("SELECT * FROM request", connection); ;
+                    reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {                        
+                        while (reader.Read())
+                        {                            
+                            int[] age = (int[])reader.GetValue(7);                            
+                            toolStripStatusLabel2.Text = ("" + age[0]);
+                        }
+                    }
+                    else
+                    {
+                        toolStripStatusLabel2.Text = "Столбец не обнаружен!";                       
+                    }
+                }
+                reader.Close();
+            }
+            catch (Exception error)
+            {
+                toolStripStatusLabel2.Text = "Ошибка!\nMessage error: " + error.Message;
+            }
+            connection.Close();
+        }
+
+        private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            int indexRow = 0;
+            if (e.RowIndex >= 0)
+                indexRow = e.RowIndex;
+            else return;
+            DataGridViewRow row = dataGridView2.Rows[indexRow];
+            textBox3.Text = row.Cells[0].Value.ToString();
+            textBox4.Text = row.Cells[1].Value.ToString();
+            textBox5.Text = row.Cells[2].Value.ToString();
         }
     }
 }

@@ -46,6 +46,7 @@ namespace Final_qualifying_work
                     toolStripStatusLabel2.Text = "Успешное подключение к базе!";
                     adapter.Fill(data);
                     dataGridView1.DataSource = data.Tables[0];
+                    //dataGridView1.AutoGenerateColumns = true;
                     dataGridView1.ClearSelection();
                 }
             }
