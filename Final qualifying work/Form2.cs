@@ -14,8 +14,7 @@ namespace Final_qualifying_work
     public partial class Form2 : Form
     {
         string parametresConnections;
-        string query;
-        string textIN;
+        string query;        
         NpgsqlConnection connection;
         NpgsqlCommand command;
         NpgsqlDataAdapter adapter;
@@ -27,10 +26,11 @@ namespace Final_qualifying_work
         }
 
         private void Form2_Load(object sender, EventArgs e)
-        {
+        {            
             parametresConnections = Form0.F0.parametresConnections;
-            query = "SELECT * FROM service";
             connection = Form0.F0.connection;
+            query = "SELECT * FROM service";
+            //query = "SELECT id_req, fio, phone_num, date, comment_req  FROM req UNION SELECT id_req, fio, phone_num, date, comment_req FROM req_list";
             adapter = new NpgsqlDataAdapter(query, connection);
             data = new DataSet();                        
             
@@ -39,7 +39,7 @@ namespace Final_qualifying_work
                 connection.Open();
                 if (connection.State == System.Data.ConnectionState.Open)
                 {
-                    toolStripStatusLabel2.Text = "Connection status: Successful Connection!";
+                    toolStripStatusLabel2.Text = "Успешное подключение к форме Услуг!";
                     adapter.Fill(data);
                     for(int i = 0; i < data.Tables[0].Rows.Count; i++)
                     {
@@ -51,7 +51,7 @@ namespace Final_qualifying_work
             }
             catch (Exception error)
             {
-                toolStripStatusLabel2.Text = "Connection status: Error connections!\nMessage error: " + error.Message;
+                toolStripStatusLabel2.Text = "Ошибка подключение к форме Услуг!\nMessage error: " + error.Message;
             }
             connection.Close();
         }
@@ -62,47 +62,38 @@ namespace Final_qualifying_work
         }
 
         private void button2_Click(object sender, EventArgs e) // INSERT(Save)
-        {
-            this.Close();
+        {            
             try
             {
                 connection.Open();
                 if (connection.State == System.Data.ConnectionState.Open)
                 {
-                    
-                }
-                //textIN = ;
-                if (textBox1.Text != "" && textBox2.Text != "")                
-                    insertData(textBox1.Text, Convert.ToInt32(textBox2.Text),richTextBox1.Text);
+                    if (textBox1.Text != "" && textBox2.Text != "")
+                    {
+                        insertData(textBox1.Text, Convert.ToInt32(textBox2.Text), dateTimePicker1, richTextBox1.Text);
+                        Form1.F1.updateGridView1();                        
+                    }
+                }          
             }
             catch (Exception error)
             {
-                label1.Text = "Connection2 status: Error connections2!\nMessage error: " + error.Message;
+                label1.Text = "Ошибка! Сохранить не удалось!\nMessage error: " + error.Message;
             }
-            data.Clear();
-            adapter.Fill(data);
-            //dataGridView1.DataSource = data.Tables[0];           
             connection.Close();
-        }
-
-        private void load_service()
-        {
-            List<string> service_items = new List<string>();
-            //checkedListBox1.
-            //service_items = checkedListBox1.CheckedItems();
-            
-        }
+            //this.Close();
+        }        
 
         private void ToolStripMenuItem0_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void insertData(string fio, int phone_num, string comment)
+        private void insertData(string fio_req, int phone_num, DateTimePicker date_req, string comment_req)
         {
             try
             {
-                command = new NpgsqlCommand("INSERT INTO req (fio, phone_num, date, comment_req) VALUES ('" + fio + "'," + phone_num + "," + dateTimePicker1 + ",'" + comment + "');", connection); //",'" + servise + "'," + status + ",'" + name_master + "','" + name_client + "');", connection);
+                //command = new NpgsqlCommand("INSERT INTO req (fio, phone_num, date, comment_req) VALUES ('" + fio + "', " + phone_num + ", '" + date.Value.Date.ToString("yyyy.MM.dd") + "', '" + comment_req + "');", connection); //",'" + servise + "'," + status + ",'" + name_master + "','" + name_client + "');", connection);
+                command = new NpgsqlCommand("INSERT INTO request (fio_client, phone_num, date_req, comment_req) VALUES ('" + fio_req + "', " + phone_num + ", '" + date_req.Value.Date.ToString("yyyy.MM.dd") + "', '" + comment_req + "');", connection); 
                 command.ExecuteNonQuery();
                 toolStripStatusLabel2.Text = "Успешное добавление!";
             }

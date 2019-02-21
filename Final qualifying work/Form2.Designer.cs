@@ -77,7 +77,7 @@
             this.textBox2.Location = new System.Drawing.Point(137, 113);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(246, 26);
-            this.textBox2.TabIndex = 0;
+            this.textBox2.TabIndex = 1;
             // 
             // label2
             // 
@@ -127,7 +127,7 @@
             this.checkedListBox1.Location = new System.Drawing.Point(457, 81);
             this.checkedListBox1.Name = "checkedListBox1";
             this.checkedListBox1.Size = new System.Drawing.Size(189, 298);
-            this.checkedListBox1.TabIndex = 2;
+            this.checkedListBox1.TabIndex = 4;
             // 
             // label6
             // 
@@ -145,7 +145,7 @@
             this.richTextBox1.Location = new System.Drawing.Point(30, 252);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(353, 106);
-            this.richTextBox1.TabIndex = 4;
+            this.richTextBox1.TabIndex = 3;
             this.richTextBox1.Text = "";
             // 
             // button1
@@ -233,7 +233,7 @@
             // ToolStripMenuItem0
             // 
             this.ToolStripMenuItem0.Name = "ToolStripMenuItem0";
-            this.ToolStripMenuItem0.Size = new System.Drawing.Size(180, 22);
+            this.ToolStripMenuItem0.Size = new System.Drawing.Size(165, 22);
             this.ToolStripMenuItem0.Text = "Добавить услугу";
             this.ToolStripMenuItem0.Click += new System.EventHandler(this.ToolStripMenuItem0_Click);
             // 
@@ -243,7 +243,7 @@
             this.dateTimePicker1.Location = new System.Drawing.Point(137, 148);
             this.dateTimePicker1.Name = "dateTimePicker1";
             this.dateTimePicker1.Size = new System.Drawing.Size(246, 26);
-            this.dateTimePicker1.TabIndex = 11;
+            this.dateTimePicker1.TabIndex = 2;
             // 
             // Form2
             // 

@@ -12,8 +12,9 @@ using System.Windows.Forms;
 namespace Final_qualifying_work
 {    
     public partial class Form1 : Form
-    {        
+    {
         //List<string> dataItems = new List<string>();
+        public static Form1 F1;
         string parametresConnections;
         string query;
         //string textIN;
@@ -25,7 +26,8 @@ namespace Final_qualifying_work
 
         public Form1()
         {
-            InitializeComponent();                       
+            InitializeComponent();
+            F1 = this;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -44,6 +46,7 @@ namespace Final_qualifying_work
                     toolStripStatusLabel2.Text = "Успешное подключение к базе!";
                     adapter.Fill(data);
                     dataGridView1.DataSource = data.Tables[0];
+                    dataGridView1.ClearSelection();
                 }
             }
             catch (Exception error)
@@ -57,49 +60,49 @@ namespace Final_qualifying_work
         {
             //this.Hide();
             Form2 newForm2 = new Form2();
-            newForm2.ShowDialog();
-            //this.Close();
-            /*try
-            {
-                connection.Open();
-                if (connection.State == System.Data.ConnectionState.Open)
-                {
-                    label1.Text = "Connection2 status: Successful Connection2!";
-                }
-                textIN = textBox2.Text;
-                if (textIN != "")                
-                    insertData(textIN);
-            }
-            catch (Exception error)
-            {
-                label1.Text = "Connection2 status: Error connections2!\nMessage error: " + error.Message;
-            }
-            data.Clear();
-            adapter.Fill(data);
-            dataGridView1.DataSource = data.Tables[0];           
-            connection.Close();*/
+            newForm2.ShowDialog();            
         }
 
         private void button2_Click(object sender, EventArgs e)  // DELETE
         {            
             try
             {
-                connection.Open();
-                DataGridViewRow line = dataGridView1.CurrentRow;
+                connection.Open();                
                 if (connection.State == System.Data.ConnectionState.Open)
-                {                                        
+                {
+                    //DataGridViewRow line = dataGridView1.CurrentRow;
                     deleteLine(Convert.ToInt32(textBox1.Text));
+                    data.Clear();
+                    adapter.Fill(data);
+                    dataGridView1.DataSource = data.Tables[0];
                 }
             }
             catch (Exception error)
             {
-                toolStripStatusLabel2.Text = "Ошибка Соединения!\nMessage error: " + error.Message;
-            }            
-            data.Clear();
-            adapter.Fill(data);
-            dataGridView1.DataSource = data.Tables[0];            
+                toolStripStatusLabel2.Text = "Ошибка Удаления!\nMessage error: " + error.Message;
+            }        
             connection.Close();
-        }        
+            
+            if(dataGridView1.RowCount != 0)
+            {
+                DataGridViewRow row = dataGridView1.Rows[0];
+                textBox1.Text = row.Cells[0].Value.ToString();
+            }                
+        }
+
+        private void button3_Click(object sender, EventArgs e)  // UpdateALL
+        {            
+            try
+            {
+                connection.Open();
+                updateGridView1();
+            }
+            catch (Exception error)
+            {
+                toolStripStatusLabel2.Text = "Ошибка при Обновлении!\nMessage error: " + error.Message;
+            }
+            connection.Close();            
+        }
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -107,32 +110,16 @@ namespace Final_qualifying_work
             if (e.RowIndex >= 0)
                 indexRow = e.RowIndex;
             else return;
-            DataGridViewRow row = dataGridView1.Rows[indexRow];
-            //textBox1.Text = row.Cells[0].Value.ToString();
-            //label1.Text = "RowIndex = " + row;
+            DataGridViewRow row = dataGridView1.Rows[indexRow];            
             textBox1.Text = row.Cells[0].Value.ToString();
             textBox2.Text = row.Cells[1].Value.ToString();
-        }
+        }        
 
-        /*private void insertData(string servise)
+        private void deleteLine(int id_req)
         {
             try
             {
-                command = new NpgsqlCommand("INSERT INTO request (servise) VALUES ('" + servise + "');", connection); //",'" + servise + "'," + status + ",'" + name_master + "','" + name_client + "');", connection);
-                command.ExecuteNonQuery();
-                toolStripStatusLabel2.Text = "Успешное добавление!";
-            }
-            catch (Exception error)
-            {
-                toolStripStatusLabel2.Text = "Ошибка Вставки!\nMessage error: " + error.Message;
-            }
-        }*/
-
-        private void deleteLine(int id_request)
-        {
-            try
-            {
-                command = new NpgsqlCommand("DELETE FROM request WHERE id_request = " + id_request + ";", connection);
+                command = new NpgsqlCommand("DELETE FROM request WHERE id_req = " + id_req + ";", connection);
                 command.ExecuteNonQuery();
                 toolStripStatusLabel2.Text = "Удаление выполнено!";
             }
@@ -145,6 +132,40 @@ namespace Final_qualifying_work
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {            
             Application.Exit();
+        }
+
+        public void updateGridView1()   // REFRESH
+        {
+           try
+           {               
+               if (connection.State == System.Data.ConnectionState.Open)
+               {
+                   data.Clear();
+                   adapter.Fill(data);
+                   dataGridView1.DataSource = data.Tables[0];
+                   toolStripStatusLabel2.Text = "Обновление выполнено!";
+               }               
+           }
+           catch (Exception error)
+           {
+               toolStripStatusLabel2.Text = "Ошибка при Обновлении!\nMessage error: " + error.Message;
+           } 
+        }
+
+        private void resetCountToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                connection.Open();
+                command = new NpgsqlCommand("ALTER SEQUENCE request_id_req_seq RESTART; UPDATE request SET id_req = DEFAULT;", connection);
+                command.ExecuteNonQuery();
+                updateGridView1();
+            }
+            catch (Exception error)
+            {
+                toolStripStatusLabel2.Text = "Ошибка Сброса Id!\nMessage error: " + error.Message;
+            }
+            connection.Close();
         }
     }
 }
