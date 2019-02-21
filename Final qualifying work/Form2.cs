@@ -19,7 +19,10 @@ namespace Final_qualifying_work
         NpgsqlCommand command;
         NpgsqlDataReader reader;
         NpgsqlDataAdapter adapter;
-        DataSet data;        
+        DataSet data;
+        int click = 0;
+        int[] arr_id = new int[20];
+        string textUpdate;
 
         public Form2()
         {
@@ -29,7 +32,7 @@ namespace Final_qualifying_work
         private void Form2_Load(object sender, EventArgs e)
         {
             //if(checkedListBox1.)           
-           
+            
             parametresConnections = Form0.F0.parametresConnections;
             connection = Form0.F0.connection;
             query = "SELECT id_service,name_service,price_service FROM service";
@@ -133,8 +136,11 @@ namespace Final_qualifying_work
         }
 
         private void button3_Click(object sender, EventArgs e)
-        {            
-            try
+        {
+            //arr_id[click] = Convert.ToInt32(textBox3.Text);                    
+                
+           
+            /*try
             {
                 connection.Open();
                 if (connection.State == System.Data.ConnectionState.Open)
@@ -145,8 +151,8 @@ namespace Final_qualifying_work
                     {                        
                         while (reader.Read())
                         {                            
-                            int[] age = (int[])reader.GetValue(7);                            
-                            toolStripStatusLabel2.Text = ("" + age[0]);
+                            int[] list_services = (int[])reader.GetValue(7);                            
+                            //toolStripStatusLabel2.Text = ("" + list_services[0]);
                         }
                     }
                     else
@@ -154,13 +160,43 @@ namespace Final_qualifying_work
                         toolStripStatusLabel2.Text = "Столбец не обнаружен!";                       
                     }
                 }
-                reader.Close();
+                //reader.Close();
             }
             catch (Exception error)
             {
                 toolStripStatusLabel2.Text = "Ошибка!\nMessage error: " + error.Message;
             }
-            connection.Close();
+            connection.Close();*/
+            
+            if (textBox3.Text != "" && Convert.ToInt32(textBox3.Text) > 0)
+            {
+                try
+                {
+                    connection.Open();
+                    if (connection.State == System.Data.ConnectionState.Open)
+                    {                        
+                        if (click == 0)
+                        {
+                            textUpdate = "" + textBox3.Text;
+                        }
+                        else if (click > 0)
+                        {
+                            textUpdate = textUpdate + "," + textBox3.Text;
+                        }                       
+                        command = new NpgsqlCommand("UPDATE request SET list_services = '{" + textUpdate + "}';", connection);
+                        command.ExecuteNonQuery();
+                        
+                        toolStripStatusLabel2.Text = "Успешное добавление!";
+                        checkedListBox1.Items.Add(textBox4.Text);
+                    }
+                }
+                catch (Exception error)
+                {
+                    toolStripStatusLabel2.Text = "Ошибка!\nMessage error: " + error.Message;
+                }
+                connection.Close();                
+            }
+            click++;
         }
 
         private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
