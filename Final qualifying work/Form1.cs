@@ -84,7 +84,7 @@ namespace Final_qualifying_work
             }        
             connection.Close();
             
-            if(dataGridView1.RowCount != 0)
+            if(dataGridView1.RowCount != 0) // после удаления делаем переход к следующей ячейке
             {
                 DataGridViewRow row = dataGridView1.Rows[0];
                 textBox1.Text = row.Cells[0].Value.ToString();
@@ -161,6 +161,8 @@ namespace Final_qualifying_work
                 command = new NpgsqlCommand("ALTER SEQUENCE request_id_req_seq RESTART; UPDATE request SET id_req = DEFAULT;", connection);
                 command.ExecuteNonQuery();
                 updateGridView1();
+                textBox1.Text = "";
+                textBox2.Text = "";
             }
             catch (Exception error)
             {

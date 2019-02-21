@@ -79,7 +79,7 @@ namespace Final_qualifying_work
                 {
                     if (textBox1.Text != "" && textBox2.Text != "")
                     {
-                        insertData(textBox1.Text, Convert.ToInt32(textBox2.Text), dateTimePicker1, richTextBox1.Text);
+                        insertData(textBox1.Text, Convert.ToInt32(textBox2.Text), dateTimePicker1, richTextBox1.Text, "active", textUpdate);
                         Form1.F1.updateGridView1();                        
                     }
                 }          
@@ -88,16 +88,15 @@ namespace Final_qualifying_work
             {
                 toolStripStatusLabel2.Text = "Ошибка! Сохранить не удалось!\nMessage error: " + error.Message;
             }
-            connection.Close();
+            connection.Close();            
             //this.Close();
         }
 
-        private void insertData(string fio_req, int phone_num, DateTimePicker date_req, string comment_req)
+        private void insertData(string fio_req, int phone_num, DateTimePicker date_req, string comment_req, string status_req, string list_services)
         {
             try
             {
-                //command = new NpgsqlCommand("INSERT INTO req (fio, phone_num, date, comment_req) VALUES ('" + fio + "', " + phone_num + ", '" + date.Value.Date.ToString("yyyy.MM.dd") + "', '" + comment_req + "');", connection); //",'" + servise + "'," + status + ",'" + name_master + "','" + name_client + "');", connection);
-                command = new NpgsqlCommand("INSERT INTO request (fio_client, phone_num, date_req, comment_req) VALUES ('" + fio_req + "', " + phone_num + ", '" + date_req.Value.Date.ToString("yyyy.MM.dd") + "', '" + comment_req + "');", connection); 
+                command = new NpgsqlCommand("INSERT INTO request (fio_client, phone_num, date_req, comment_req, status_req,list_services) VALUES ('" + fio_req + "', " + phone_num + ", '" + date_req.Value.Date.ToString("yyyy.MM.dd") + "', '" + comment_req + "', '" + status_req + "', '{" + list_services + "}'" + ");", connection); 
                 command.ExecuteNonQuery();
                 toolStripStatusLabel2.Text = "Успешное добавление!";
             }
@@ -106,95 +105,22 @@ namespace Final_qualifying_work
                 toolStripStatusLabel2.Text = "Ошибка Вставки!\nMessage error: " + error.Message;
             }
         }
-
-        private void takeIdFromCheckedListBox()
+       
+        private void button3_Click(object sender, EventArgs e)  // list_services ARRAY
         {
-
-        }
-
-        private void takeElementArray(int[] arr)
-        {
-            /*dataReader = command.ExecuteReader();
-            while (dataReader.Read())
-                MessageBox.Show("{0}\t{1} \n", dataReader[0], dataReader[1]);
-            for (int i = 0; i < arr.Length; i++)
-            {
-                //reader =
-                
-            }*/
-            // выводим названия столбцов
-            //Console.WriteLine("{0}\t{1}\t{2}", reader.GetName(0), reader.GetName(1), reader.GetName(2));
-
-            while (reader.Read()) // построчно считываем данные
-            {
-                object id = reader.GetValue(0);
-                object name = reader.GetValue(1);
-                object age = reader.GetValue(2);
-
-                Console.WriteLine("{0} \t{1} \t{2}", id, name, age);
-            }
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            //arr_id[click] = Convert.ToInt32(textBox3.Text);                    
-                
-           
-            /*try
-            {
-                connection.Open();
-                if (connection.State == System.Data.ConnectionState.Open)
-                {                    
-                    command = new NpgsqlCommand("SELECT * FROM request", connection); ;
-                    reader = command.ExecuteReader();
-                    if (reader.HasRows)
-                    {                        
-                        while (reader.Read())
-                        {                            
-                            int[] list_services = (int[])reader.GetValue(7);                            
-                            //toolStripStatusLabel2.Text = ("" + list_services[0]);
-                        }
-                    }
-                    else
-                    {
-                        toolStripStatusLabel2.Text = "Столбец не обнаружен!";                       
-                    }
-                }
-                //reader.Close();
-            }
-            catch (Exception error)
-            {
-                toolStripStatusLabel2.Text = "Ошибка!\nMessage error: " + error.Message;
-            }
-            connection.Close();*/
-            
             if (textBox3.Text != "" && Convert.ToInt32(textBox3.Text) > 0)
             {
-                try
+                if (click == 0)
                 {
-                    connection.Open();
-                    if (connection.State == System.Data.ConnectionState.Open)
-                    {                        
-                        if (click == 0)
-                        {
-                            textUpdate = "" + textBox3.Text;
-                        }
-                        else if (click > 0)
-                        {
-                            textUpdate = textUpdate + "," + textBox3.Text;
-                        }                       
-                        command = new NpgsqlCommand("UPDATE request SET list_services = '{" + textUpdate + "}';", connection);
-                        command.ExecuteNonQuery();
-                        
-                        toolStripStatusLabel2.Text = "Успешное добавление!";
-                        checkedListBox1.Items.Add(textBox4.Text);
-                    }
+                    textUpdate = "" + textBox3.Text;
                 }
-                catch (Exception error)
+                else if (click > 0)
                 {
-                    toolStripStatusLabel2.Text = "Ошибка!\nMessage error: " + error.Message;
+                    textUpdate = textUpdate + "," + textBox3.Text;
                 }
-                connection.Close();                
+                toolStripStatusLabel2.Text = "Успешное добавление!";
+                checkedListBox1.Items.Add(textBox4.Text);
+                checkedListBox1.SetItemChecked(click, true);                        
             }
             click++;
         }
