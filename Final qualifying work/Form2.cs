@@ -16,30 +16,32 @@ namespace Final_qualifying_work
         string parametresConnections;
         string query;        
         NpgsqlConnection connection;
-        NpgsqlCommand command;
-        NpgsqlDataReader reader;
+        NpgsqlCommand command;        
         NpgsqlDataAdapter adapter;
         DataSet data;
         int click = 0;
         int[] arr_id = new int[20];
         string textUpdate;
+        NpgsqlDataReader reader;
+        public bool editing = false;
+        int id_req;
 
         public Form2()
         {
-            InitializeComponent(); 
+            InitializeComponent();
+            parametresConnections = Form0.F0.parametresConnections;
+            connection = Form0.F0.connection;
+            data = new DataSet();
         }
 
         private void Form2_Load(object sender, EventArgs e)
         {
-            //if(checkedListBox1.)           
             
-            parametresConnections = Form0.F0.parametresConnections;
-            connection = Form0.F0.connection;
-            query = "SELECT id_service,name_service,price_service FROM service";
+
+            /*query = "SELECT id_service,name_service,price_service FROM service";
             //query = "SELECT id_req, fio, phone_num, date, comment_req  FROM req UNION SELECT id_req, fio, phone_num, date, comment_req FROM req_list";
             adapter = new NpgsqlDataAdapter(query, connection);
-            data = new DataSet();                        
-            
+
             try
             {
                 connection.Open();
@@ -48,25 +50,19 @@ namespace Final_qualifying_work
                     toolStripStatusLabel2.Text = "Успешное подключение к форме Услуг!";
                     adapter.Fill(data);
                     dataGridView2.DataSource = data.Tables[0];
-                    dataGridView2.ClearSelection();
-                    /*
-                    for(int i = 0; i < data.Tables[0].Rows.Count; i++)
-                    {
-                        checkedListBox1.Items.Add(data.Tables[0].Rows[i][1].ToString());
-                        listBox1.Items.Add(data.Tables[0].Rows[i][2].ToString());
-                    }*/
-                    //checkedListBox1.DataSource = data.Tables[0];                    
+                    dataGridView2.ClearSelection();                                      
                 }
             }
             catch (Exception error)
             {
                 toolStripStatusLabel2.Text = "Ошибка подключение к форме Услуг!\nMessage error: " + error.Message;
             }
-            connection.Close();
+            connection.Close();*/
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            connection.Close();
             this.Close();
         }
 
@@ -96,9 +92,18 @@ namespace Final_qualifying_work
         {
             try
             {
-                command = new NpgsqlCommand("INSERT INTO request (fio_client, phone_num, date_req, comment_req, status_req,list_services) VALUES ('" + fio_req + "', " + phone_num + ", '" + date_req.Value.Date.ToString("yyyy.MM.dd") + "', '" + comment_req + "', '" + status_req + "', '{" + list_services + "}'" + ");", connection); 
-                command.ExecuteNonQuery();
-                toolStripStatusLabel2.Text = "Успешное добавление!";
+                if(!editing)
+                {
+                    command = new NpgsqlCommand("INSERT INTO request (fio_client, phone_num, date_req, comment_req, status_req,list_services) VALUES ('" + fio_req + "', " + phone_num + ", '" + date_req.Value.Date.ToString("yyyy.MM.dd") + "', '" + comment_req + "', '" + status_req + "', '{" + list_services + "}'" + ");", connection);
+                    command.ExecuteNonQuery();
+                    toolStripStatusLabel2.Text = "Успешное добавление!";
+                }
+                else if(editing)
+                {
+                    command = new NpgsqlCommand("UPDATE request SET (fio_client, phone_num, date_req, comment_req, status_req,list_services) = ('" + fio_req + "', " + phone_num + ", '" + date_req.Value.Date.ToString("yyyy.MM.dd") + "', '" + comment_req + "', '" + status_req + "', '{" + list_services + "}'" + ") WHERE id_req = " + id_req + ";", connection);
+                    command.ExecuteNonQuery();
+                    toolStripStatusLabel2.Text = "Успешное Изменение!";
+                }
             }
             catch (Exception error)
             {
@@ -135,6 +140,89 @@ namespace Final_qualifying_work
             textBox3.Text = row.Cells[0].Value.ToString();
             textBox4.Text = row.Cells[1].Value.ToString();
             textBox5.Text = row.Cells[2].Value.ToString();
+        }     
+
+        public void servicesForm()  // Загрузка таблицы услуг
+        {           
+            query = "SELECT id_service,name_service,price_service FROM service";
+            //query = "SELECT id_req, fio, phone_num, date, comment_req  FROM req UNION SELECT id_req, fio, phone_num, date, comment_req FROM req_list";
+            adapter = new NpgsqlDataAdapter(query, connection);
+
+            try
+            {
+                connection.Open();
+                if (connection.State == System.Data.ConnectionState.Open)
+                {
+                    toolStripStatusLabel2.Text = "Успешное подключение к форме Услуг!";
+                    adapter.Fill(data);
+                    dataGridView2.DataSource = data.Tables[0];
+                    dataGridView2.ClearSelection();
+                    /*
+                    for(int i = 0; i < data.Tables[0].Rows.Count; i++)
+                    {
+                        checkedListBox1.Items.Add(data.Tables[0].Rows[i][1].ToString());
+                        listBox1.Items.Add(data.Tables[0].Rows[i][2].ToString());
+                    }*/
+                    //checkedListBox1.DataSource = data.Tables[0];                    
+                }
+            }
+            catch (Exception error)
+            {
+                toolStripStatusLabel2.Text = "Ошибка подключение к форме Услуг!\nMessage error: " + error.Message;
+            }
+            connection.Close();
         }
+
+        public void loadForEditingForm(string id) // Загрузка формы для изменения
+        {
+            editing = true;
+            id_req = Convert.ToInt32(id);
+            try
+            {
+                //MessageBox.Show("кукусики!");
+                //toolStripStatusLabel2.Text = "Вы приступили к изменению запроса!\nMessage error: ";
+                connection.Open();
+                command = new NpgsqlCommand("SELECT fio_client, phone_num, date_req, comment_req, list_services FROM request WHERE id_req =" + id, connection);
+                reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        object fio_client = reader.GetValue(0);
+                        object phone_num = reader.GetValue(1);
+                        object date_req = reader.GetValue(2);
+                        object comment_req = reader.GetValue(3);
+                        int[] list_services = (int[])reader.GetValue(4);
+
+                        textBox1.Text = fio_client.ToString();
+                        textBox2.Text = phone_num.ToString();
+                        dateTimePicker1.Text = date_req.ToString();
+                        richTextBox1.Text = comment_req.ToString();
+
+
+                        for (int i = 1; i < list_services.Length; i++)
+                        {
+                            command = new NpgsqlCommand("SELECT name_service FROM service WHERE id_service =" + list_services[i], connection);
+                            reader = command.ExecuteReader();
+                            object name_service = reader.GetValue(0);
+                            checkedListBox1.Items.Add(name_service);
+                            checkedListBox1.SetItemChecked(click, true);
+                        }
+                    }
+                    
+                }
+                else
+                {
+                    toolStripStatusLabel2.Text = "Столбец не обнаружен!";
+                }               
+                
+            }
+            catch (Exception error)
+            {
+                toolStripStatusLabel2.Text = "Ошибка!\nMessage error: " + error.Message;
+            }
+            connection.Close();
+            //textBox3.Text = 
+        } 
     }
 }

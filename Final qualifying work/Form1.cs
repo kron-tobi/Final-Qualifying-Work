@@ -59,9 +59,11 @@ namespace Final_qualifying_work
 
         private void button1_Click(object sender, EventArgs e)  // INSERT
         {
-            //this.Hide();
+            //this.Hide();            
             Form2 newForm2 = new Form2();
-            newForm2.ShowDialog();            
+            newForm2.editing = false;
+            newForm2.servicesForm();
+            newForm2.ShowDialog();
         }
 
         private void button2_Click(object sender, EventArgs e)  // DELETE
@@ -169,6 +171,21 @@ namespace Final_qualifying_work
                 toolStripStatusLabel2.Text = "Ошибка Сброса Id!\nMessage error: " + error.Message;
             }
             connection.Close();
+        }
+
+        private void button4_Click(object sender, EventArgs e) //кнопка изменить
+        {
+            if(textBox1.Text != "")
+            {
+                Form2 newForm2 = new Form2();
+                newForm2.servicesForm();
+                newForm2.loadForEditingForm(textBox1.Text);
+                newForm2.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("Изменить не удалось! Запрос не был выбран!");
+            }
         }
     }
 }
