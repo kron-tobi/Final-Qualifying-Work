@@ -36,34 +36,24 @@ namespace Final_qualifying_work
 
         private void Form2_Load(object sender, EventArgs e)
         {
-            
-
-            /*query = "SELECT id_service,name_service,price_service FROM service";
-            //query = "SELECT id_req, fio, phone_num, date, comment_req  FROM req UNION SELECT id_req, fio, phone_num, date, comment_req FROM req_list";
-            adapter = new NpgsqlDataAdapter(query, connection);
-
-            try
-            {
-                connection.Open();
-                if (connection.State == System.Data.ConnectionState.Open)
-                {
-                    toolStripStatusLabel2.Text = "Успешное подключение к форме Услуг!";
-                    adapter.Fill(data);
-                    dataGridView2.DataSource = data.Tables[0];
-                    dataGridView2.ClearSelection();                                      
-                }
-            }
-            catch (Exception error)
-            {
-                toolStripStatusLabel2.Text = "Ошибка подключение к форме Услуг!\nMessage error: " + error.Message;
-            }
-            connection.Close();*/
+            //click = 0;
+            dataGridView2.ClearSelection(); // сброс селекта Tab           
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             connection.Close();
             this.Close();
+        }
+
+        private void Form2_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            /*Form of = Application.OpenForms["From2"];
+            if (of != null)
+                of.Close();*/
+            connection.Close();
+            Application.Exit();
+            
         }
 
         private void button2_Click(object sender, EventArgs e) // INSERT(Save)
@@ -117,17 +107,17 @@ namespace Final_qualifying_work
             {
                 if (click == 0)
                 {
-                    textUpdate = "" + textBox3.Text;
+                    textUpdate = textBox3.Text;
                 }
                 else if (click > 0)
                 {
                     textUpdate = textUpdate + "," + textBox3.Text;
-                }
-                toolStripStatusLabel2.Text = "Успешное добавление!";
+                }                
                 checkedListBox1.Items.Add(textBox4.Text);
                 checkedListBox1.SetItemChecked(click, true);                        
             }
             click++;
+            toolStripStatusLabel2.Text = "Успешное добавление!" + click;
         }
 
         private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -177,10 +167,12 @@ namespace Final_qualifying_work
         {
             editing = true;
             id_req = Convert.ToInt32(id);
+            int[] list_services = { };
             try
             {
                 //MessageBox.Show("кукусики!");
                 //toolStripStatusLabel2.Text = "Вы приступили к изменению запроса!\nMessage error: ";
+                
                 connection.Open();
                 command = new NpgsqlCommand("SELECT fio_client, phone_num, date_req, comment_req, list_services FROM request WHERE id_req =" + id, connection);
                 reader = command.ExecuteReader();
@@ -192,30 +184,70 @@ namespace Final_qualifying_work
                         object phone_num = reader.GetValue(1);
                         object date_req = reader.GetValue(2);
                         object comment_req = reader.GetValue(3);
-                        int[] list_services = (int[])reader.GetValue(4);
+                        list_services = (int[])reader.GetValue(4);
 
                         textBox1.Text = fio_client.ToString();
                         textBox2.Text = phone_num.ToString();
                         dateTimePicker1.Text = date_req.ToString();
                         richTextBox1.Text = comment_req.ToString();
-
-
-                        for (int i = 1; i < list_services.Length; i++)
-                        {
-                            command = new NpgsqlCommand("SELECT name_service FROM service WHERE id_service =" + list_services[i], connection);
-                            reader = command.ExecuteReader();
-                            object name_service = reader.GetValue(0);
-                            checkedListBox1.Items.Add(name_service);
-                            checkedListBox1.SetItemChecked(click, true);
-                        }
                     }
-                    
+
                 }
                 else
                 {
                     toolStripStatusLabel2.Text = "Столбец не обнаружен!";
-                }               
+                }
+            }
+            catch (Exception error)
+            {
+                toolStripStatusLabel2.Text = "Ошибка!\nMessage error: " + error.Message;
+            }            
+            connection.Close();
+            try
+            {                
+                connection.Open();                
+                //int[] id_list = { };
+                for (int i = 0; i < list_services.Length; i++)
+                {
+                    toolStripStatusLabel2.Text = toolStripStatusLabel2.Text + list_services[i];
+                    //id_list[i] = Convert.ToInt32(toolStripStatusLabel2.Text);
+                }
+                int id_list = 1;
+                //command = new NpgsqlCommand("SELECT name_service,price_service FROM service WHERE id_service = 1", connection);
+                //reader = command.ExecuteReader();
+                //reader.Read();
+                //if (reader.HasRows)
+                // {
+                //    object name_service = reader.GetValue(0);
+                //    checkedListBox1.Items.Add(name_service);
+                // }
+                //object name_service = reader2.GetValue(1);
+                //checkedListBox1.Items.Add(name_service);
                 
+                for (int i = 0; i < list_services.Length; i++)
+                {
+                    id_list = list_services[i];
+                    command = new NpgsqlCommand("SELECT name_service FROM service WHERE id_service =" + id_list, connection);
+                    reader = command.ExecuteReader();
+                    reader.Read();
+                    object name_service;
+                    if (reader.HasRows)
+                    {
+                        name_service = reader.GetValue(0);
+                        reader.Close();
+                        if (i == 0)
+                        {
+                            textUpdate = id_list.ToString();
+                        }
+                        else if (i > 0)
+                        {
+                            textUpdate = textUpdate + ", " + id_list.ToString();
+                        }
+                        click++;
+                        checkedListBox1.Items.Add(name_service);
+                        checkedListBox1.SetItemChecked(i, true);
+                    }                   
+                }                
             }
             catch (Exception error)
             {

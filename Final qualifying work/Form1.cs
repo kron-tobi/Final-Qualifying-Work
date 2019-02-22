@@ -47,7 +47,7 @@ namespace Final_qualifying_work
                     adapter.Fill(data);
                     dataGridView1.DataSource = data.Tables[0];
                     //dataGridView1.AutoGenerateColumns = true;
-                    dataGridView1.ClearSelection();
+                    dataGridView1.ClearSelection(); // сброс селекта Tab
                 }
             }
             catch (Exception error)
@@ -155,7 +155,7 @@ namespace Final_qualifying_work
            } 
         }
 
-        private void resetCountToolStripMenuItem_Click(object sender, EventArgs e)
+        private void resetCountToolStripMenuItem_Click(object sender, EventArgs e)  // сброс счетчика
         {
             try
             {
