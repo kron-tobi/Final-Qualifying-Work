@@ -66,7 +66,7 @@ namespace Final_qualifying_work
                 {
                     if (textBox1.Text != "" && textBox2.Text != "" && textBox6.Text != "")
                     {
-                        insertData(textBox1.Text, Convert.ToInt32(textBox2.Text), dateTimePicker1, richTextBox1.Text, "active", textUpdate, sellUpdate);
+                        insertData(textBox1.Text, textBox2.Text, dateTimePicker1, richTextBox1.Text, "active", textUpdate, sellUpdate);
                         Form1.F1.updateGridView1();                        
                     }
                 }          
@@ -79,19 +79,19 @@ namespace Final_qualifying_work
             this.Close();
         }
 
-        private void insertData(string fio_req, int phone_num, DateTimePicker date_req, string comment_req, string status_req, string list_services, double sum_req)
+        private void insertData(string fio_req, string phone_num, DateTimePicker date_req, string comment_req, string status_req, string list_services, double sum_req)
         {
             try
             {
                 if(!editing)
                 {
-                    command = new NpgsqlCommand("INSERT INTO request (fio_client, phone_num, date_req, comment_req, status_req, list_services, sum_req) VALUES ('" + fio_req + "', " + phone_num + ", '" + date_req.Value.Date.ToString("yyyy.MM.dd") + "', '" + comment_req + "', '" + status_req + "', '{" + list_services + "}', " + sum_req + ");", connection);
+                    command = new NpgsqlCommand("INSERT INTO request (fio_client, phone_num, date_req, comment_req, status_req, list_services, sum_req) VALUES ('" + fio_req + "', '" + phone_num + "', '" + date_req.Value.Date.ToString("yyyy.MM.dd") + "', '" + comment_req + "', '" + status_req + "', '{" + list_services + "}', " + sum_req + ");", connection);
                     command.ExecuteNonQuery();
                     toolStripStatusLabel2.Text = "Успешное добавление!";
                 }
                 else if(editing)
                 {
-                    command = new NpgsqlCommand("UPDATE request SET (fio_client, phone_num, date_req, comment_req, status_req, list_services, sum_req) = ('" + fio_req + "', " + phone_num + ", '" + date_req.Value.Date.ToString("yyyy.MM.dd") + "', '" + comment_req + "', '" + status_req + "', '{" + list_services + "}', " + sum_req + ") WHERE id_req = " + id_req + ";", connection);
+                    command = new NpgsqlCommand("UPDATE request SET (fio_client, phone_num, date_req, comment_req, status_req, list_services, sum_req) = ('" + fio_req + "', '" + phone_num + "', '" + date_req.Value.Date.ToString("yyyy.MM.dd") + "', '" + comment_req + "', '" + status_req + "', '{" + list_services + "}', " + sum_req + ") WHERE id_req = " + id_req + ";", connection);
                     command.ExecuteNonQuery();
                     toolStripStatusLabel2.Text = "Успешное Изменение!";
                 }
@@ -102,7 +102,7 @@ namespace Final_qualifying_work
             }
         }
        
-        private void button3_Click(object sender, EventArgs e)  // list_services ARRAY
+        private void button3_Click(object sender, EventArgs e)  // Добавить (list_services ARRAY)
         {            
             if (textBox3.Text != "" && Convert.ToInt32(textBox3.Text) > 0)
             {
@@ -115,9 +115,10 @@ namespace Final_qualifying_work
                 else if (click > 0)
                 {
                     textUpdate = textUpdate + "," + textBox3.Text;
-                }                
-                checkedListBox1.Items.Add(textBox4.Text);
-                checkedListBox1.SetItemChecked(click, true);                        
+                }          
+                listBox1.Items.Add(textBox4.Text);
+                //checkedListBox1.Items.Add(textBox4.Text);
+                //checkedListBox1.SetItemChecked(click, true);                        
             }
             click++;
             toolStripStatusLabel2.Text = "Успешное добавление!" + click;
@@ -194,7 +195,6 @@ namespace Final_qualifying_work
                         dateTimePicker1.Text = date_req.ToString();
                         richTextBox1.Text = comment_req.ToString();
                     }
-
                 }
                 else
                 {
@@ -222,8 +222,7 @@ namespace Final_qualifying_work
                     command = new NpgsqlCommand("SELECT name_service,price_service FROM service WHERE id_service =" + id_list, connection);
                     reader = command.ExecuteReader();
                     reader.Read();
-                    object name_service;
-                    
+                    object name_service;                    
                     if (reader.HasRows)
                     {
                         name_service = reader.GetValue(0);
@@ -239,8 +238,9 @@ namespace Final_qualifying_work
                             textUpdate = textUpdate + ", " + id_list.ToString();
                         }
                         click++;
-                        checkedListBox1.Items.Add(name_service);
-                        checkedListBox1.SetItemChecked(i, true);
+                        listBox1.Items.Add(name_service);
+                        //checkedListBox1.Items.Add(name_service);
+                        //checkedListBox1.SetItemChecked(i, true);
                     }                   
                 }                
             }
@@ -250,6 +250,19 @@ namespace Final_qualifying_work
             }
             connection.Close();
             //textBox3.Text = 
-        } 
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            //if (listBox1.I)
+            //connection.Close();
+            //listBox1.Items.Remove(name_service);
+        }
+
+        private void listBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            //string select = listBox1.SelectedItem.ToString();
+            
+        }
     }
 }
