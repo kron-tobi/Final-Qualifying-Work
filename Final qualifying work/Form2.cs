@@ -76,7 +76,7 @@ namespace Final_qualifying_work
                 toolStripStatusLabel2.Text = "Ошибка! Сохранить не удалось!\nMessage error: " + error.Message;
             }
             connection.Close();            
-            //this.Close();
+            this.Close();
         }
 
         private void insertData(string fio_req, int phone_num, DateTimePicker date_req, string comment_req, string status_req, string list_services, double sum_req)
