@@ -22,6 +22,7 @@ namespace Final_qualifying_work
         int click = 0;
         int[] arr_id = new int[20];
         string textUpdate;
+        double sellUpdate;
         NpgsqlDataReader reader;
         public bool editing = false;
         int id_req;
@@ -63,9 +64,9 @@ namespace Final_qualifying_work
                 connection.Open();
                 if (connection.State == System.Data.ConnectionState.Open)
                 {
-                    if (textBox1.Text != "" && textBox2.Text != "")
+                    if (textBox1.Text != "" && textBox2.Text != "" && textBox6.Text != "")
                     {
-                        insertData(textBox1.Text, Convert.ToInt32(textBox2.Text), dateTimePicker1, richTextBox1.Text, "active", textUpdate);
+                        insertData(textBox1.Text, Convert.ToInt32(textBox2.Text), dateTimePicker1, richTextBox1.Text, "active", textUpdate, sellUpdate);
                         Form1.F1.updateGridView1();                        
                     }
                 }          
@@ -78,19 +79,19 @@ namespace Final_qualifying_work
             //this.Close();
         }
 
-        private void insertData(string fio_req, int phone_num, DateTimePicker date_req, string comment_req, string status_req, string list_services)
+        private void insertData(string fio_req, int phone_num, DateTimePicker date_req, string comment_req, string status_req, string list_services, double sum_req)
         {
             try
             {
                 if(!editing)
                 {
-                    command = new NpgsqlCommand("INSERT INTO request (fio_client, phone_num, date_req, comment_req, status_req,list_services) VALUES ('" + fio_req + "', " + phone_num + ", '" + date_req.Value.Date.ToString("yyyy.MM.dd") + "', '" + comment_req + "', '" + status_req + "', '{" + list_services + "}'" + ");", connection);
+                    command = new NpgsqlCommand("INSERT INTO request (fio_client, phone_num, date_req, comment_req, status_req, list_services, sum_req) VALUES ('" + fio_req + "', " + phone_num + ", '" + date_req.Value.Date.ToString("yyyy.MM.dd") + "', '" + comment_req + "', '" + status_req + "', '{" + list_services + "}', " + sum_req + ");", connection);
                     command.ExecuteNonQuery();
                     toolStripStatusLabel2.Text = "Успешное добавление!";
                 }
                 else if(editing)
                 {
-                    command = new NpgsqlCommand("UPDATE request SET (fio_client, phone_num, date_req, comment_req, status_req,list_services) = ('" + fio_req + "', " + phone_num + ", '" + date_req.Value.Date.ToString("yyyy.MM.dd") + "', '" + comment_req + "', '" + status_req + "', '{" + list_services + "}'" + ") WHERE id_req = " + id_req + ";", connection);
+                    command = new NpgsqlCommand("UPDATE request SET (fio_client, phone_num, date_req, comment_req, status_req, list_services, sum_req) = ('" + fio_req + "', " + phone_num + ", '" + date_req.Value.Date.ToString("yyyy.MM.dd") + "', '" + comment_req + "', '" + status_req + "', '{" + list_services + "}', " + sum_req + ") WHERE id_req = " + id_req + ";", connection);
                     command.ExecuteNonQuery();
                     toolStripStatusLabel2.Text = "Успешное Изменение!";
                 }
@@ -102,9 +103,11 @@ namespace Final_qualifying_work
         }
        
         private void button3_Click(object sender, EventArgs e)  // list_services ARRAY
-        {
+        {            
             if (textBox3.Text != "" && Convert.ToInt32(textBox3.Text) > 0)
             {
+                sellUpdate += Convert.ToDouble(textBox5.Text);
+                textBox6.Text = sellUpdate.ToString();
                 if (click == 0)
                 {
                     textUpdate = textBox3.Text;
@@ -163,7 +166,7 @@ namespace Final_qualifying_work
             connection.Close();
         }
 
-        public void loadForEditingForm(string id) // Загрузка формы для изменения
+        public void loadForEditingForm(string id) // Изменить
         {
             editing = true;
             id_req = Convert.ToInt32(id);
@@ -205,35 +208,27 @@ namespace Final_qualifying_work
             connection.Close();
             try
             {                
-                connection.Open();                
-                //int[] id_list = { };
+                connection.Open();
                 for (int i = 0; i < list_services.Length; i++)
                 {
                     toolStripStatusLabel2.Text = toolStripStatusLabel2.Text + list_services[i];
-                    //id_list[i] = Convert.ToInt32(toolStripStatusLabel2.Text);
                 }
                 int id_list = 1;
-                //command = new NpgsqlCommand("SELECT name_service,price_service FROM service WHERE id_service = 1", connection);
-                //reader = command.ExecuteReader();
-                //reader.Read();
-                //if (reader.HasRows)
-                // {
-                //    object name_service = reader.GetValue(0);
-                //    checkedListBox1.Items.Add(name_service);
-                // }
-                //object name_service = reader2.GetValue(1);
-                //checkedListBox1.Items.Add(name_service);
                 
                 for (int i = 0; i < list_services.Length; i++)
                 {
+                    
                     id_list = list_services[i];
-                    command = new NpgsqlCommand("SELECT name_service FROM service WHERE id_service =" + id_list, connection);
+                    command = new NpgsqlCommand("SELECT name_service,price_service FROM service WHERE id_service =" + id_list, connection);
                     reader = command.ExecuteReader();
                     reader.Read();
                     object name_service;
+                    
                     if (reader.HasRows)
                     {
                         name_service = reader.GetValue(0);
+                        sellUpdate += Convert.ToDouble(reader.GetValue(1));
+                        textBox6.Text = sellUpdate.ToString();
                         reader.Close();
                         if (i == 0)
                         {

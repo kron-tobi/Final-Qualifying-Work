@@ -57,7 +57,7 @@ namespace Final_qualifying_work
             connection.Close();
         }
 
-        private void button1_Click(object sender, EventArgs e)  // INSERT
+        private void button1_Click(object sender, EventArgs e)  // Добавить (INSERT)
         {
             //this.Hide();            
             Form2 newForm2 = new Form2();
@@ -66,7 +66,7 @@ namespace Final_qualifying_work
             newForm2.ShowDialog();
         }
 
-        private void button2_Click(object sender, EventArgs e)  // DELETE
+        private void button2_Click(object sender, EventArgs e)  // Удалить (DELETE)
         {            
             try
             {
@@ -90,10 +90,16 @@ namespace Final_qualifying_work
             {
                 DataGridViewRow row = dataGridView1.Rows[0];
                 textBox1.Text = row.Cells[0].Value.ToString();
-            }                
+                textBox2.Text = row.Cells[1].Value.ToString();
+            }
+            else if (dataGridView1.RowCount == 0)
+            {
+                textBox1.Text = "";
+                textBox2.Text = "";
+            }
         }
 
-        private void button3_Click(object sender, EventArgs e)  // UpdateALL
+        private void button3_Click(object sender, EventArgs e)  // Обновить (Update)
         {            
             try
             {
